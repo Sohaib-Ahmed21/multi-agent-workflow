@@ -18,18 +18,17 @@ DOC_AGENT_URL = "http://localhost:8010"
 provider = A2AClientToolProvider(known_agent_urls=[DOC_AGENT_URL])
 tools = provider.tools
 
+ORCHESTRATOR_PROMPT = (
+    "You are an orchestrator.\n"
+    "Only call doc_summarizer_agent when the user asks Python coding questions.\n"
+    "Otherwise, answer directly and do not call any tools.\n"
+    "Do not override the discovered agent URL; strictly use only discovered agents.\n"
+)
+
 orchestrator = create_react_agent(
     model=llm,
     tools=tools,
-    prompt=(
-        # TENTATIVE PROMPT
-        "You are an orchestrator.\n"
-        "ONLY call doc_summarizer_agent if the user asks about python coding questions.\n"
-        "If not python coding related, answer directly and do not call tools.\n"
-        # Adding the below prompt to the orchestrator agent to ensure that the agent only
-        # uses the discovered agents.
-        "Don't override the discovery agent url. The strict requirement is that only use discovered agents."
-    )
+    prompt=ORCHESTRATOR_PROMPT,
 )
 
 async def main():
